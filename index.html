@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05070f">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Terminal+">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Terminal+ — Développement Personnel & Études</title>
+<style>
+:root{--bg:#05070f;--bg2:rgba(255,255,255,.05);--card:rgba(255,255,255,.07);--card2:rgba(255,255,255,.11);--txt:#f5f7ff;--muted:rgba(235,240,255,.58);--accent:#0a84ff;--accent2:#bf5af2;--green:#30d158;--red:#ff453a;--gold:#ffd60a;--border:rgba(255,255,255,.12);--radius:24px;--shine:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.03);--drop:0 12px 32px rgba(0,0,0,.3);--glass:blur(28px) saturate(180%)}
+body.light{--bg:#eef1f8;--bg2:rgba(255,255,255,.5);--card:rgba(255,255,255,.62);--card2:rgba(255,255,255,.92);--txt:#0b1020;--muted:rgba(20,28,55,.55);--border:rgba(20,30,70,.09);--shine:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(255,255,255,.4);--drop:0 10px 28px rgba(40,60,120,.12)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:-apple-system,"SF Pro Display","SF Pro Text",Inter,"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;letter-spacing:-.011em;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+body::before{content:"";position:fixed;inset:-10%;z-index:-1;pointer-events:none;background:radial-gradient(45% 35% at 12% 8%,rgba(10,132,255,.5),transparent 65%),radial-gradient(40% 35% at 92% 18%,rgba(191,90,242,.4),transparent 65%),radial-gradient(50% 40% at 75% 92%,rgba(48,209,88,.22),transparent 65%),radial-gradient(40% 30% at 5% 85%,rgba(255,159,10,.14),transparent 65%)}
+body.light::before{opacity:.5}
+.glass,.card,.daycol,.sidebar,.bottomnav,.modal,.toast{backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass)}
+.app{display:flex;min-height:100vh}
+.sidebar{width:236px;position:fixed;top:12px;bottom:12px;left:12px;padding:16px 10px;display:flex;flex-direction:column;gap:3px;z-index:50;border-radius:28px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shine),var(--drop);overflow-y:auto}
+.logo{font-size:1.2rem;font-weight:800;padding:6px 12px 16px;letter-spacing:-.03em;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.navbtn{display:flex;align-items:center;gap:11px;padding:10px 13px;border:none;background:transparent;color:var(--muted);border-radius:16px;cursor:pointer;font-size:.9rem;font-weight:600;font-family:inherit;width:100%;text-align:left;transition:.2s}
+.navbtn:hover{background:var(--bg2);color:var(--txt)}
+.navbtn.active{background:var(--card2);color:var(--txt);box-shadow:var(--shine),0 2px 10px rgba(0,0,0,.15)}
+.navbtn .ico{width:22px;text-align:center}
+.main{flex:1;min-width:0;margin-left:260px;padding:32px 30px 90px;max-width:1250px}
+.view{display:none}.view.active{display:block}
+.main>*{animation:fade .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes fade{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1}}
+h1{font-size:2.1rem;font-weight:800;letter-spacing:-.035em;margin-bottom:2px}
+.sub{color:var(--muted);font-size:.95rem;margin-bottom:22px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shine),var(--drop)}
+.card h3{font-size:.95rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.stat{font-size:2rem;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.statlbl{color:var(--muted);font-size:.8rem;font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border:1px solid var(--border);border-radius:999px;font-weight:700;font-size:.9rem;font-family:inherit;cursor:pointer;transition:.18s;background:var(--card2);color:var(--txt);box-shadow:var(--shine)}
+.btn:active{transform:scale(.96)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:rgba(255,255,255,.25);box-shadow:var(--shine),0 6px 20px rgba(10,132,255,.4)}
+.btn.green{background:var(--green);color:#03210b;border-color:transparent}
+.btn.ghost{background:transparent;color:var(--muted);box-shadow:none}
+.btn.small{padding:7px 14px;font-size:.8rem}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.days{display:flex;gap:14px;overflow-x:auto;padding-bottom:14px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.daycol{min-width:236px;flex:1;scroll-snap-align:center;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px;box-shadow:var(--shine),var(--drop)}
+.daycol.today{border-color:rgba(10,132,255,.6);box-shadow:var(--shine),0 0 0 1px rgba(10,132,255,.3),0 0 40px rgba(10,132,255,.2)}
+.daycol h4{text-align:center;padding:8px 0 12px;font-size:.9rem;font-weight:700}
+.slot{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:.2s;box-shadow:var(--shine);font-size:.85rem}
+.slot:hover{background:var(--card2)}.slot:active{transform:scale(.98)}
+.slot .t{color:var(--muted);font-size:.72rem;font-weight:700;font-variant-numeric:tabular-nums}
+.slot .n{font-weight:700;margin:3px 0 5px}
+.slot.done{opacity:.6;border-color:rgba(48,209,88,.5)}
+.slot.done .t{color:var(--green)}
+.slot .badge{font-size:.65rem;padding:2px 8px;border-radius:999px;background:var(--card2);color:var(--muted);font-weight:700}
+.pdhead{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.pdicon{width:58px;height:58px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;background:var(--card2);box-shadow:var(--shine)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 18px}
+.chip{background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:5px 13px;font-size:.78rem;font-weight:600;color:var(--muted)}
+.chip.xp{background:rgba(48,209,88,.14);color:var(--green);border-color:rgba(48,209,88,.3)}
+.resrow{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--border);border-radius:18px;margin-bottom:9px;background:var(--bg2);box-shadow:var(--shine)}
+.resrow .ric{width:42px;height:42px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+.resrow .rt{flex:1;min-width:0}.resrow .rt b{font-size:.9rem}.resrow .rt p{color:var(--muted);font-size:.76rem}
+.resrow a{color:var(--accent);font-size:.78rem;font-weight:700;text-decoration:none}
+.tip{border-left:3px solid var(--gold);background:rgba(255,214,10,.08);padding:11px 14px;border-radius:0 16px 16px 0;margin-bottom:8px;font-size:.85rem}
+.xpbar{height:8px;background:var(--card2);border-radius:999px;overflow:hidden;margin:10px 0 6px}
+.xpbar>div{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:999px;box-shadow:0 0 12px rgba(10,132,255,.6);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.habit{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:18px;margin-bottom:9px;box-shadow:var(--shine)}
+.habit .cb{width:26px;height:26px;border-radius:50%;border:2px solid var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:transparent;flex-shrink:0;transition:.2s}
+.habit .cb.on{background:var(--green);border-color:var(--green);color:#03210b}
+.habit b{flex:1;font-size:.9rem}.habit .meta{color:var(--muted);font-size:.74rem}
+.habit.done b{color:var(--muted);text-decoration:line-through}
+.jq{font-weight:700;font-size:.9rem;margin:14px 0 6px}
+textarea,input[type=text],input[type=time],input[type=date],input[type=number],select{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--txt);border-radius:16px;padding:11px 14px;font-size:.9rem;font-family:inherit;outline:none;box-shadow:var(--shine)}
+textarea:focus,input:focus{border-color:var(--accent)}
+textarea{min-height:64px;resize:vertical}
+.timerbig{font-size:3.6rem;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-.05em;margin:14px 0}
+.timerbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.segdisp{display:flex;gap:6px;justify-content:center;margin-bottom:8px;padding:4px;background:var(--bg2);border-radius:999px;width:fit-content;margin-inline:auto}
+.seg{padding:6px 16px;border-radius:999px;border:none;background:transparent;color:var(--muted);font-weight:700;cursor:pointer;font-size:.82rem;transition:.2s}
+.seg.on{background:var(--card2);color:var(--txt);box-shadow:var(--shine),0 2px 8px rgba(0,0,0,.2)}
+.bottomnav{display:none;position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:60;overflow-x:auto;padding:6px;border-radius:32px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shine),0 14px 40px rgba(0,0,0,.4);scrollbar-width:none}
+.bottomnav .row{display:flex;min-width:max-content;gap:2px}
+.bnavbtn{flex:1;min-width:76px;border:none;background:transparent;color:var(--muted);font-size:.62rem;font-weight:700;font-family:inherit;padding:8px 6px;cursor:pointer;text-align:center;border-radius:24px;white-space:nowrap;transition:.2s}
+.bnavbtn .ico{display:block;font-size:1.2rem;margin-bottom:2px}
+.bnavbtn.active{color:var(--accent);background:var(--card2);box-shadow:var(--shine)}
+.modalbg{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
+.modalbg.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:32px;padding:28px;max-width:420px;width:100%;text-align:center;box-shadow:var(--shine),0 24px 60px rgba(0,0,0,.5);animation:fade .3s}
+.modal .big{font-size:3rem;margin-bottom:6px}
+.lrow{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;border-bottom:1px solid var(--border);font-size:.87rem}
+.lrow:last-child{border-bottom:none}
+.pill{font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:999px}
+.subjhdr{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;margin-bottom:10px;cursor:pointer;box-shadow:var(--shine)}
+.subjhdr b{font-size:.95rem}
+.subjbody{display:none;padding:4px 6px 12px}.subj.open .subjbody{display:block}
+.chap{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;background:var(--bg2);border-radius:14px;margin-bottom:6px;font-size:.85rem}
+.switch{position:relative;width:48px;height:28px;background:var(--card2);border:1px solid var(--border);border-radius:999px;cursor:pointer;transition:.25s;flex-shrink:0}
+.switch.on{background:var(--green)}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:.25s}
+.switch.on::after{left:22px}
+.toast{position:fixed;bottom:104px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(48,209,88,.85);color:#03210b;font-weight:800;padding:11px 22px;border-radius:999px;opacity:0;transition:.3s;z-index:200;pointer-events:none;font-size:.9rem;box-shadow:0 10px 30px rgba(48,209,88,.35)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(min-width:861px){.sidebar{display:flex}}
+@media(max-width:860px){
+  .sidebar{display:none}
+  .main{margin-left:0;padding:calc(22px + env(safe-area-inset-top)) 16px 130px}
+  .bottomnav{display:block}
+  h1{font-size:1.9rem}
+  .g4{grid-template-columns:1fr 1fr}
+  .g4>.card:nth-child(2){order:-1;grid-column:1/-1}
+  .g4>.card:nth-child(4){grid-column:1/-1}
+  .g4 .stat{font-size:1.7rem}
+  .daycol{min-width:86%;flex:0 0 86%}
+}
+::-webkit-scrollbar{height:0;width:0}
+
+.bottomnav .row{display:flex;width:100%;min-width:0;gap:2px}
+.bnavbtn{min-width:0;padding:8px 2px;font-size:.66rem}
+.bnavbtn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto 3px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.brand svg{width:50px;height:50px;flex-shrink:0}
+.bt{font-size:1.55rem;font-weight:800;letter-spacing:-.03em}.bt span{color:var(--accent)}
+.bs{color:var(--muted);font-size:.82rem}
+.lvbadge{margin-left:auto;background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:7px 14px;font-weight:800;font-size:.85rem;color:var(--gold);box-shadow:var(--shine)}
+.hello{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.hi{width:52px;height:52px;border-radius:50%;background:rgba(191,90,242,.22);display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.ht{flex:1;min-width:180px}.ht b{font-size:1.2rem}.ht p{color:var(--muted);font-size:.85rem;margin-top:2px}
+.pillobj{border:1px solid rgba(191,90,242,.5);background:rgba(191,90,242,.15);color:#d7a8ff;border-radius:999px;padding:8px 14px;font-weight:700;font-size:.8rem;white-space:nowrap}
+body.light .pillobj{color:#7d2bb8}
+.stats4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px}
+.tile{display:flex;align-items:center;gap:12px;padding:14px;border-radius:22px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shine)}
+.tile i,.sc i{font-style:normal;width:44px;height:44px;border-radius:50%;background:color-mix(in srgb,var(--c) 30%,transparent);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.tile>div{min-width:0;flex:1}.tile b{font-size:1.25rem;font-weight:800;display:block;font-variant-numeric:tabular-nums}.tile span{color:var(--muted);font-size:.74rem}
+.tile .xpbar{margin:4px 0 0}
+.secthead{display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px}
+.secthead h2{font-size:1.15rem;font-weight:800;letter-spacing:-.02em}.secthead a{color:var(--accent);font-weight:700;font-size:.85rem;cursor:pointer}
+.subjgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px}
+.sc{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:24px;cursor:pointer;background:color-mix(in srgb,var(--c) 16%,transparent);border:1px solid color-mix(in srgb,var(--c) 55%,transparent);box-shadow:var(--shine);position:relative;transition:.2s}
+.sc:active{transform:scale(.97)}
+.sc i{border-radius:15px;background:var(--c);width:48px;height:48px}
+.sc b{display:block;font-size:1rem}.sc span{display:block;color:var(--muted);font-size:.7rem;margin:2px 0 4px}.sc small{color:var(--c);font-weight:700;font-size:.72rem}
+.sc em{position:absolute;right:14px;top:14px;font-style:normal;font-size:1.5rem;color:var(--c)}
+.subjgrid>.sc:last-child:nth-child(odd){grid-column:1/-1}
+.subjhdr[style*="--c"]{border-color:color-mix(in srgb,var(--c) 55%,transparent);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.skillrow{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:22px;scrollbar-width:none}
+.sk{flex:0 0 84px;text-align:center;padding:12px 4px;border-radius:20px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shine);cursor:pointer;font-size:.7rem;font-weight:700}
+.sk i{display:block;font-style:normal;font-size:1.5rem;margin-bottom:4px}
+.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:22px}
+.quick button{display:flex;align-items:center;gap:10px;padding:14px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--txt);font-size:.85rem;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:var(--shine)}
+.trow{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s}
+.trow:last-child{border-bottom:none}
+.trow:active{background:var(--bg2)}
+.trow.cur{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.trow.tdone{opacity:.55}
+.trow .tt{width:52px;flex-shrink:0;font-size:.72rem;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.trow.cur .tt{color:var(--accent)}
+.trow .ti{font-size:1.1rem;flex-shrink:0}
+.trow .tn{flex:1;min-width:0;font-size:.86rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow.tdone .tn{text-decoration:line-through;color:var(--muted)}
+.trow .txp{font-size:.72rem;font-weight:800;color:var(--green);flex-shrink:0}
+.trow .tcheck{width:22px;height:22px;border-radius:50%;background:var(--green);color:#03210b;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
+.trow .tarrow{color:var(--muted);font-size:1.1rem;flex-shrink:0}
+.subnav{display:flex;gap:4px;overflow-x:auto;padding:4px;margin-bottom:18px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;scrollbar-width:none}
+.sn{flex:1;white-space:nowrap;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:.8rem;font-family:inherit;padding:8px 14px;border-radius:999px;cursor:pointer}
+.sn.on{background:var(--card2);color:var(--txt);box-shadow:var(--shine)}
+@media(min-width:700px){.stats4{grid-template-columns:repeat(4,1fr)}.subjgrid{grid-template-columns:repeat(3,1fr)}.quick{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:861px){.subnav{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" id="main"></main>
+</div>
+<nav class="bottomnav"><div class="row" id="bottomnav"></div></nav>
+<div class="modalbg" id="modalbg"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const APPS = {
+  duolingo:{n:"Duolingo",cat:"Anglais",d:"Leçons d'anglais gamifiées, 5 min/jour suffisent.",l:"https://www.duolingo.com",ico:"🦉"},
+  anki:{n:"Anki / AnkiDroid",cat:"Mémorisation",d:"Cartes mémoire avec répétition espacée. Idéal vocabulaire + cours.",l:"https://ankiweb.net",ico:"🧠"},
+  bbc:{n:"BBC Learning English",cat:"Anglais",d:"Vidéos, grammaire, vocabulaire par niveau. Contenu authentique.",l:"https://www.bbc.co.uk/learningenglish",ico:"🇬🇧"},
+  brilliant:{n:"Brilliant",cat:"Raisonnement",d:"Exercices interactifs de logique, maths et réflexion scientifique.",l:"https://brilliant.org",ico:"💡"},
+  khan:{n:"Khan Academy",cat:"Maths / Sciences",d:"Cours et exercices de maths, physique, chimie gratuits.",l:"https://fr.khanacademy.org",ico:"📐"},
+  lichess:{n:"Lichess",cat:"Stratégie / Échecs",d:"Échecs gratuits : parties, puzzles, leçons tactiques.",l:"https://lichess.org",ico:"♟️"},
+  mimo:{n:"Mimo",cat:"Programmation",d:"Apprendre à coder sur mobile, par petites leçons.",l:"https://mimo.org",ico:"📱"},
+  fcc:{n:"freeCodeCamp",cat:"Informatique",d:"Certifications gratuites : Python, JS, web, algorithmes.",l:"https://www.freecodecamp.org",ico:"💻"},
+  forest:{n:"Forest",cat:"Concentration",d:"Plante un arbre pendant que tu travailles. Pas de distraction.",l:"https://www.forestapp.cc",ico:"🌲"},
+  photomath:{n:"Photomath",cat:"Maths",d:"Vérification des calculs : scanne une équation, étape par étape.",l:"https://photomath.com",ico:"📸"},
+  alarmy:{n:"Alarmy",cat:"Discipline",d:"Réveil qui t'oblige à vraiment te lever (photo, calcul…).",l:"https://alarmy.app",ico:"⏰"},
+  petitbambou:{n:"Petit BamBou",cat:"Méditation",d:"Séances de méditation guidée, courtes et progressives.",l:"https://www.petitbambou.com",ico:"🧘"},
+  neuronation:{n:"NeuroNation",cat:"Mémoire",d:"Exercices cérébraux courts : mémoire, concentration, logique.",l:"https://www.neuronation.com",ico:"🧠"},
+  lumosity:{n:"Lumosity",cat:"Mémoire",d:"Jeux d'entraînement cérébral quotidiens, quelques minutes suffisent.",l:"https://www.lumosity.com",ico:"🎯"},
+  simplypiano:{n:"Simply Piano",cat:"Musique",d:"Apprends le piano pas à pas, avec reconnaissance des notes jouées.",l:"https://www.simplypiano.com",ico:"🎹"},
+};
+const VIDEOS = {
+  anglais:[["BBC Learning English","Chaîne complète — grammaire, vocabulaire, prononciation.","https://www.youtube.com/@bbclearningenglish"],
+           ["English with Lucy","Anglais britannique, expression orale naturelle.","https://www.youtube.com/@EnglishwithLucy"]],
+  logique:[["3Blue1Brown","Les maths expliquées visuellement — intuition avant calcul.","https://www.youtube.com/@3blue1brown"]],
+  strategie:[["GothamChess","Échecs : stratégie, leçons, parties commentées.","https://www.youtube.com/@GothamChess"],
+             ["Lichess","Puzzles et analyses — clique puis joue sur lichess.org.","https://lichess.org"]],
+  info:[["freeCodeCamp","Cours complets gratuits Python, JS, web.","https://www.youtube.com/@freecodecamp"],
+        ["Grafikart","Développement web en français, très pédagogue.","https://www.youtube.com/@Grafikart"]],
+  maths:[["Yvan Monka","Cours de maths Terminale complets en français.","https://www.youtube.com/@MonSeuilDebutant"]],
+  physique:[["Yvan Monka — Physique","Chapitres de physique Terminale expliqués pas à pas.","https://www.youtube.com/@YvanMonka"]],
+  critique:[["Mr Phi","Philosophie et esprit critique — arguments, sophismes.","https://www.youtube.com/@MonsieurPhi"]],
+  lecture:[["Ali Abdaal","Lecture, productivité, apprentissage — inspiration.","https://www.youtube.com/@aliabdaal"]],
+  business:[["Groupe Altarea","Business et entrepreneuriat décryptés (FR).","https://www.youtube.com/@GroupeAltarea"],
+            ["Stan Leloup","Marketing, business — contenu dense et concret.","https://www.youtube.com/@StanLeloupMarketing"]],
+  combat:[["FightTIPS","Techniques de combat, self-défense et arts martiaux expliquées clairement.","https://www.youtube.com/@FightTIPS"]],
+  psychologie:[["Charisma on Command","Langage corporel, charisme et psychologie sociale.","https://www.youtube.com/@CharismaOnCommand"]],
+  piano:[["Pianote","Cours de piano pour débutants et intermédiaires.","https://www.youtube.com/@Pianote"]],
+};
+const CONSEILS = {
+  anglais:["5 min minimum chaque jour — la régularité bat l'intensité.","Écoute BBC en mangeant : immersion passive compte aussi.","Note 3 nouveaux mots par séance dans Anki.","Parle à voix haute, même seul : la prononciation s'entraîne."],
+  logique:["Commence par les exercices faciles pour chauffer le cerveau.","Cherche 2 solutions avant de regarder la réponse.","Chronomètre-toi : la vitesse de raisonnement s'entraîne.","Impulse (app) est parfait pour ce warm-up rapide du matin."],
+  meditation:["Assieds-toi confortablement, ferme les yeux, respire lentement.","5 minutes suffisent pour recentrer ta journée.","Ne juge pas tes pensées, laisse-les passer."],
+  detente:["Mets un minuteur avant de commencer : la détente doit rester courte.","Préfère un contenu qui t'apprend quelque chose.","Coupe dès que le minuteur sonne — pas de scroll infini."],
+  culte:["Profite pleinement de ce temps de repos et de communauté.","Les révisions attendront demain — le Sabbat fait partie de l'équilibre.","Reconnecte-toi avec ta famille et ton église."],
+  coucher:["Écran coupé 30 min avant de dormir.","Prépare tes affaires pour demain avant d'éteindre la lumière.","Un coucher régulier vaut mieux qu'une grasse matinée le week-end."],
+  etirements:["5 minutes suffisent : nuque, dos, jambes.","Une douche froide en fin de douche réveille mieux qu'un café.","Fais-le AVANT de regarder ton téléphone, pas après."],
+  cours:["Note l'essentiel, pas tout — tu retiens mieux en résumant.","Pose une question dès que tu ne comprends pas, pas après coup.","Éteins les notifications du téléphone pendant les cours."],
+  combat:["Échauffe-toi 10 minutes avant toute séance de frappe ou de mouvement.","Technique avant vitesse, vitesse avant puissance.","Le shadow-boxing suffit pour progresser sans matériel.","Étire-toi après l'effort, jamais à froid."],
+  psychologie:["Observe les intentions derrière les mots, pas seulement les mots.","Une bonne question ouverte en dit plus qu'un interrogatoire.","Utilise ça pour comprendre les gens — jamais contre leur intérêt."],
+  piano:["10 minutes par jour valent mieux qu'une heure une fois par semaine.","Travaille une main à la fois avant de les combiner.","Enregistre-toi de temps en temps pour entendre tes progrès."],
+  strategie:["Analyse chaque partie perdue : 1 erreur notée = 1 leçon.","Fais 5 puzzles tactiques par séance sur Lichess.","Pense en plans, pas en coups : « quel est mon objectif ? »"],
+  maths:["Réécris la formule à la main avant de l'utiliser.","Photomath pour vérifier, jamais pour tricher.","1 exercice difficile vaut 5 exercices faciles."],
+  observation:["Observe d'abord, interprète ensuite : sépare les deux étapes.","Décris à voix haute ce que tu vois : ça ancre la mémoire.","Relis ton observation 10 min plus tard pour tester la rétention."],
+  critique:["Toujours distinguer FAIT / HYPOTHÈSE / PREUVE avant de conclure.","Cherche activement une preuve qui INFIRME ton idée.","Demande-toi : « qui dit ça et pourquoi ? »"],
+  maitrise:["Quand l'envie de distraction arrive : respire, note-la, continue.","Pas de téléphone dans la pièce pendant la séance.","L'ennui est un muscle : tiens-le 5 minutes de plus."],
+  communication:["Écoute sans préparer ta réponse pendant que l'autre parle.","Réformule avant de répondre : « si je comprends bien… »","Une question précise vaut mieux que trois vagues."],
+  lecture:["Prends des notes en marge : une idée = une phrase.","Relis tes notes le lendemain matin (répétition espacée).","Applique UNE idée du livre dans la semaine."],
+  revisions:["Active recall : ferme le livre et restitue de mémoire.","Révise l'essentiel le jour même du cours.","Fais des fiches Anki des points faibles uniquement."],
+  informatique:["Touche au code dès la première minute : apprendre = faire.","Petit projet > gros tuto.","Copie le code à la main, ne fais pas de copier-coller."],
+  business:["Étudie un business que tu croises chaque jour : comment il gagne de l'argent ?","Lis 10 pages d'un livre business par semaine.","Note une idée d'activité par semaine, même mauvaise."],
+  sport:["Hydrate-toi avant, pendant, après.","La régularité (3×/semaine) bat les séances héroïques.","Échauffe-toi 5 minutes minimum."],
+  planification:["3 priorités maximum par jour.","Planifie la tâche la plus dure en premier.","2 minutes : c'est tout ce qu'il faut pour planifier."],
+  bilan:["Sois honnête : le bilan est pour toi, pas pour impressionner.","Célèbre ce qui a marché, corrige ce qui a raté.","Termine toujours par la priorité de demain."],
+  repos:["Le repos fait partie du programme : pas de culpabilité.","Écran coupé 30 min avant de dormir.","Sieste 20 min max pour ne pas dérégler le sommeil."],
+  reveil:["Eau immédiatement au réveil.","Pas de téléphone avant la planification.","Lumière allumée direct : ça coupe la mélatonine."],
+};
+const PROGRAMS = {
+  reveil:{n:"Réveil / Routine",ico:"⏰",cat:"Discipline",xp:10,apps:["alarmy"],hab:[],tips:"reveil"},
+  meditation:{n:"Méditation",ico:"🧘",cat:"Mental",xp:15,apps:["petitbambou"],hab:[],tips:"meditation"},
+  logique:{n:"Logique & Raisonnement",ico:"🧩",cat:"Raisonnement",xp:25,apps:["brilliant"],hab:["questions"],tips:"logique"},
+  anglais:{n:"Anglais",ico:"🇬🇧",cat:"Langue",xp:25,apps:["duolingo","anki","bbc"],hab:["anglais"],tips:"anglais"},
+  planification:{n:"Planification",ico:"📋",cat:"Discipline",xp:10,apps:["forest"],hab:["tache"],tips:"planification"},
+  strategie:{n:"Stratégie / Échecs",ico:"♟️",cat:"Stratégie",xp:25,apps:["lichess"],hab:["observer"],tips:"strategie"},
+  maths:{n:"Maths / Raisonnement",ico:"📐",cat:"Études",xp:25,apps:["khan","photomath"],hab:["erreur","corriger"],tips:"maths"},
+  observation:{n:"Observation / Mémoire",ico:"👁️",cat:"Observation",xp:25,apps:["anki","neuronation","lumosity"],hab:["observer"],tips:"observation"},
+  detente:{n:"Détente (vidéos)",ico:"📱",cat:"Repos",xp:5,apps:[],hab:[],tips:"detente"},
+  culte:{n:"Culte / Église",ico:"🙏",cat:"Spiritualité",xp:15,apps:[],hab:[],tips:"culte"},
+  coucher:{n:"Coucher",ico:"😴",cat:"Discipline",xp:5,apps:[],hab:["dormir"],tips:"coucher"},
+  etirements:{n:"Étirements & toilette",ico:"🤸",cat:"Discipline",xp:10,apps:[],hab:[],tips:"etirements"},
+  cours:{n:"Cours",ico:"🏫",cat:"École",xp:25,apps:[],hab:[],tips:"cours"},
+  combat:{n:"Arts martiaux / Combat",ico:"🥋",cat:"Physique",xp:30,apps:[],hab:[],tips:"combat"},
+  psychologie:{n:"Psychologie & Influence",ico:"🎭",cat:"Social",xp:25,apps:["anki"],hab:[],tips:"psychologie"},
+  piano:{n:"Piano",ico:"🎹",cat:"Créativité",xp:20,apps:["simplypiano"],hab:[],tips:"piano"},
+  revisions:{n:"Révisions Terminale",ico:"📚",cat:"Études",xp:50,apps:["anki","khan","photomath"],hab:["revisions"],tips:"revisions"},
+  maitrise:{n:"Maîtrise de soi",ico:"🧘",cat:"Mental",xp:25,apps:["forest"],hab:["reseaux"],tips:"maitrise"},
+  pensee:{n:"Pensée critique",ico:"🤔",cat:"Raisonnement",xp:25,apps:["brilliant"],hab:["faits"],tips:"critique"},
+  communication:{n:"Communication",ico:"🗣️",cat:"Social",xp:25,apps:[],hab:["ecouter"],tips:"communication"},
+  lecture:{n:"Lecture",ico:"📖",cat:"Culture",xp:25,apps:[],hab:["lire"],tips:"lecture"},
+  bilan:{n:"Bilan / Journal",ico:"🌙",cat:"Discipline",xp:10,apps:[],hab:["dormir"],tips:"bilan"},
+  informatique:{n:"Informatique",ico:"💻",cat:"Code",xp:50,apps:["mimo","fcc"],hab:[],tips:"informatique"},
+  business:{n:"Business",ico:"💼",cat:"Entrepreneuriat",xp:25,apps:[],hab:[],tips:"business"},
+  sport:{n:"Sport",ico:"🏃",cat:"Santé",xp:25,apps:[],hab:["sport"],tips:"sport"},
+  repos:{n:"Repas / Repos",ico:"🍽️",cat:"Récupération",xp:10,apps:[],hab:[],tips:"repos"},
+};
+const HABITS = {
+  reseaux:"Pas de réseaux sociaux le matin", ecouter:"Écouter sans interrompre", observer:"Observer avant d'interpréter",
+  faits:"Distinguer faits et suppositions", tache:"Une tâche à la fois", questions:"Questions précises",
+  erreur:"Noter une erreur / jour", corriger:"Corriger une erreur", actif:"Rappel actif en cours",
+  dormir:"Dormir à l'heure (21h30)", lire:"Lire", sport:"Sport", anglais:"Anglais", revisions:"Réviser le jour même"
+};
+const MATIN=[["04h48","05h00","reveil"],["05h00","05h15","etirements"],["05h15","05h28","meditation"],["05h28","05h37","logique"],["05h37","05h50","revisions"],["05h50","06h20","lecture"]];
+const SOIR_14H=[["14h00","14h30","repos"],["14h30","15h15","sport"],["15h30","16h00","combat"],["16h00","16h20","strategie"],["16h20","17h00","revisions"],
+  ["17h00","17h20","observation"],["17h20","17h35","anglais"],["17h35","18h00","psychologie"],["18h00","19h00","repos"],
+  ["19h00","20h30","revisions"],["20h30","20h50","lecture"],["20h50","21h00","observation"],["21h00","21h30","communication"],["21h30","21h35","coucher"]];
+const SCHEDULE_DEFAULT = {
+  Lundi:[...MATIN,["07h10","12h10","cours"],...SOIR_14H],
+  Mardi:[...MATIN,["07h10","17h00","cours"],["19h00","19h30","repos"],["19h30","20h10","revisions"],["20h10","20h30","anglais"],
+    ["20h30","20h50","lecture"],["20h50","21h00","observation"],["21h00","21h30","communication"],["21h30","21h35","coucher"]],
+  Mercredi:[...MATIN,["07h10","12h00","cours"],...SOIR_14H],
+  Jeudi:[...MATIN,["07h10","15h00","cours"],["17h00","17h30","repos"],["17h30","17h50","strategie"],["17h50","18h30","revisions"],
+    ["18h30","18h50","observation"],["18h50","19h05","anglais"],["19h05","19h25","psychologie"],["19h25","20h10","revisions"],
+    ["20h10","20h30","lecture"],["20h30","20h45","observation"],["20h45","21h15","communication"],["21h15","21h30","coucher"]],
+  Vendredi:[...MATIN,["07h10","16h00","cours"],["18h00","18h30","repos"],["18h30","19h10","revisions"],["19h10","19h30","observation"],
+    ["19h30","19h45","anglais"],["19h45","20h10","psychologie"],["20h10","20h30","repos"],["20h30","20h50","lecture"],
+    ["20h50","21h00","observation"],["21h00","21h20","communication"],["21h20","21h30","coucher"]],
+  Samedi:[["04h48","05h15","reveil"],["05h15","05h28","meditation"],["05h28","05h37","logique"],["05h50","06h20","lecture"],
+    ["09h00","12h00","culte"],["20h30","20h50","lecture"],["20h50","21h00","observation"],["21h00","21h30","communication"]],
+  Dimanche:[...MATIN,["06h30","07h30","sport"],["07h30","08h00","combat"],["09h00","09h30","strategie"],["09h30","10h00","anglais"],
+    ["10h20","12h00","informatique"],["13h30","15h00","business"],["15h00","16h30","revisions"],["16h30","16h50","observation"],
+    ["16h50","17h10","psychologie"],["18h00","18h30","piano"],["18h30","19h30","revisions"],["20h30","20h50","lecture"],
+    ["20h50","21h00","observation"],["21h00","21h30","communication"]],
+};
+const SUBJECTS = ["Mathématiques","Physique-Chimie","SVT","Philosophie","Histoire-Géo","Français","Anglais"];
+const SM={"Mathématiques":["🧮","#0a84ff"],"Physique-Chimie":["⚛️","#30d158"],"SVT":["🧬","#ff9f0a"],"Philosophie":["🏛️","#ff375f"],"Histoire-Géo":["🌍","#64d2ff"],"Français":["📖","#bf5af2"],"Anglais":["🇬🇧","#5e5ce6"]};
+const METHODES={"Mathématiques":"Fais des exercices avant de relire le cours — comprends en résolvant, pas en relisant. Refais tes erreurs 48h après. Une fiche de formules par chapitre.",
+"Physique-Chimie":"Comprends d'abord le phénomène, puis la formule. Refais les exercices types sans regarder la correction. Une fiche par thème (mécanique, électricité...).",
+"SVT":"Apprends par schémas légendés, pas par blocs de texte. Récite à voix haute sans notes. Relie les mécanismes entre eux.",
+"Philosophie":"Ne mémorise pas un plan tout fait — comprends la question posée par la notion. Construis tes propres exemples. Entraîne-toi à argumenter à l'oral.",
+"Histoire-Géo":"Retiens d'abord la frise chronologique globale, puis les détails. Fais une carte mentale par chapitre. Entraîne-toi sur des sujets type bac en temps limité.",
+"Français":"Lis activement, note les procédés en marge. Apprends des citations courtes et précises, pas des paragraphes entiers. Entraîne-toi à l'oral à voix haute.",
+"Anglais":"L'immersion quotidienne (audio/vidéo) compte plus que la grammaire seule. Note le vocabulaire en contexte. Parle à voix haute, même seul."};
+const METHODE={revisions:"Chaque session : 1) ferme le cours et écris ce dont tu te souviens (rappel actif) — 2) corrige en rouge avec le cours — 3) ne refais que ce que tu as raté. Ne relis jamais un cours en entier sans t'être testé avant. Reviens dessus à J+1, J+3, J+7.",
+lecture:"Lis un stylo en main : souligne une seule idée par page, pas plus. À la fin de la session, résume ce que tu retiens en 3 phrases, livre fermé. Le but est de retenir, pas d'avancer les pages.",
+communication:"Chaque jour : une conversation où tu écoutes sans préparer ta réponse pendant que l'autre parle. Pose une question ouverte avant de donner ton avis. Le soir, note une situation où tu as bien ou mal communiqué, et pourquoi.",
+psychologie:"Observe une personne par jour : repère un signe non-verbal et ce qu'il pourrait indiquer, puis vérifie en posant une question. Sert à comprendre les gens — jamais à les manipuler."};
+const LIVRES={psychologie:["Comment analyser les gens — (déjà dans ta routine)","Influence et manipulation — Robert Cialdini","Comment se faire des amis — Dale Carnegie","L'intelligence émotionnelle — Daniel Goleman"],
+lecture:["Atomic Habits — James Clear","Thinking, Fast and Slow — Daniel Kahneman","The 7 Habits of Highly Effective People — Stephen Covey"]};
+const SK=[["logique","Logique"],["observation","Observation"],["strategie","Stratégie"],["psychologie","Psychologie"],["maitrise","Maîtrise"],["combat","Combat"],["communication","Communication"],["piano","Piano"]];
+const LOGO=`<svg viewBox="0 0 512 512"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs><g fill="url(#lg)"><rect x="70" y="120" width="230" height="70" rx="14"/><rect x="150" y="120" width="70" height="270" rx="14"/><rect x="318" y="270" width="130" height="44" rx="10"/><rect x="361" y="227" width="44" height="130" rx="10"/></g></svg>`;
+const BN=[["dash","dash","Accueil",`<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>`],
+ ["etudes","etudes","Matières",`<svg viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg>`],
+ ["planning","planning","Planning",`<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`],
+ ["res","ressources","Ressources",`<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>`],
+ ["prof","progression","Profil",`<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`]];
+const GROUP={apps:"res",ressources:"res",competences:"res",habits:"prof",journal:"prof",progression:"prof",params:"prof",fiches:"etudes",etudes:"etudes"};
+function subnav(){const G={etudes:[["etudes","Matières"],["fiches","Fiches (SRS)"]],res:[["ressources","Ressources"],["apps","Applications"],["competences","Compétences"]],prof:[["progression","Progression"],["habits","Habitudes"],["journal","Journal"],["params","Paramètres"]]}[GROUP[CUR]];
+  return `<div class="subnav">${G.map(g=>`<button class="sn ${g[0]===CUR?"on":""}" onclick="go('${g[0]}')">${g[1]}</button>`).join("")}</div>`}
+function openSubj(n){go("etudes");setTimeout(()=>{const e=document.getElementById("subj-"+n.replace(/\W/g,""));if(e){e.classList.add("open");e.scrollIntoView({behavior:"smooth",block:"center"})}},60)}
+const LEVELS=[0,500,1200,2000,3000,4500,6500,9000,12000,16000,20000];
+const RAPPELS=[["04h48","Debout — pas de téléphone (Alarmy)"],["05h15","Méditation"],["05h28","Impulse — logique"],["05h50","Lecture du matin"],
+  ["Retour","Réviser avant de te distraire"],["20h30","Lecture de la Bible"],["21h00","Moment famille"],["21h30","Coucher"],["09h00 (sam.)","Culte"]];
+const KEY="terminalplus_v1";
+let S;
+function def(){return{xp:0,hist:[],habits:{},journal:{},done:{},studyMin:0,subjects:{},reminders:RAPPELS.map(()=>true),light:false,schedule:JSON.parse(JSON.stringify(SCHEDULE_DEFAULT)),cards:[],rigueur:false,syncId:""}}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))||def()}catch(e){S=def()}
+  if(!S.subjects)S.subjects={}; if(!S.reminders)S.reminders=RAPPELS.map(()=>true);
+  if(!S.schedule)S.schedule=JSON.parse(JSON.stringify(SCHEDULE_DEFAULT));
+  if(!S.cards)S.cards=[]; if(S.rigueur===undefined)S.rigueur=false; if(S.syncId===undefined)S.syncId="";}
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+load();
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function weekKey(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return d.toISOString().slice(0,10)}
+function levelOf(xp){let l=1;for(let i=0;i<LEVELS.length;i++){if(xp>=LEVELS[i])l=i+1}return l}
+function nextLevelXp(xp){const l=levelOf(xp);return LEVELS[l]||99999}
+function xpSince(x){return S.hist.filter(h=>h.d>=x).reduce((a,h)=>a+h.x,0)}
+function dayName(){return ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"][new Date().getDay()]}
+function nowMin(){const d=new Date();return d.getHours()*60+d.getMinutes()}
+function toMin(t){const a=t.split("h");return (+a[0])*60+(+a[1]||0)}
+function notifyIn10(label){
+  if(!("Notification" in window)){toast("Notifications non supportées ici");return}
+  const fire=()=>{new Notification("Terminal+",{body:label+" — c'est le moment.",icon:"icon-192.png"});toast("🔔 Programmée dans 10 min")};
+  if(Notification.permission==="granted"){setTimeout(()=>new Notification("Terminal+",{body:label+" — c'est le moment.",icon:"icon-192.png"}),10*60000);toast("🔔 Notification programmée dans 10 min (garde l'app ouverte)")}
+  else Notification.requestPermission().then(p=>{if(p==="granted"){setTimeout(()=>new Notification("Terminal+",{body:label+" — c'est le moment.",icon:"icon-192.png"}),10*60000);toast("🔔 Notification programmée")}else toast("Notifications refusées")})}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
+function modal(html){document.getElementById("modal").innerHTML=html;document.getElementById("modalbg").classList.add("show")}
+function closeModal(){document.getElementById("modalbg").classList.remove("show")}
+document.getElementById("modalbg").addEventListener("click",e=>{if(e.target.id==="modalbg")closeModal()});
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+const VIEWS=[["dash","🏠","Dashboard"],["planning","🗓️","Planning"],["etudes","📚","Études"],["fiches","🧠","Fiches (SRS)"],["competences","🎯","Compétences"],
+ ["apps","📱","Applications"],["ressources","🔗","Ressources"],["habits","✅","Habitudes"],["journal","📓","Journal"],
+ ["progression","⚡","Progression"],["params","⚙️","Paramètres"]];
+let CUR="dash", CURPROG=null, TIMERP=null;
+function buildNav(){
+  document.getElementById("sidebar").innerHTML='<div class="logo">Terminal+</div>'+VIEWS.map(v=>`<button class="navbtn" data-v="${v[0]}" onclick="go('${v[0]}')"><span class="ico">${v[1]}</span>${v[2]}</button>`).join("");
+  document.getElementById("bottomnav").innerHTML='<div class="row">'+BN.map(b=>`<button class="bnavbtn" data-g="${b[0]}" onclick="go('${b[1]}')">${b[3]}${b[2]}</button>`).join("")+'</div>';
+}
+function go(v,arg){CUR=v;CURPROG=arg||CURPROG;clearInterval(TIMERP);TIMERP=null;
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.v===v));document.querySelectorAll(".bnavbtn").forEach(b=>b.classList.toggle("active",b.dataset.g===(GROUP[v]||v)));
+  render();window.scrollTo(0,0)}
+function render(){const m=document.getElementById("main");
+  ({dash:renderDash,planning:renderPlanning,etudes:renderEtudes,competences:renderCompetences,apps:renderApps,
+    ressources:renderRessources,habits:renderHabits,journal:renderJournal,progression:renderProgression,params:renderParams,fiches:renderFiches})[CUR](m);if(GROUP[CUR])m.insertAdjacentHTML("afterbegin",subnav())}
+function renderDash(m){
+  const dn=dayName(),slots=S.schedule[dn]||[],nm=nowMin();
+  let cur=null,nxt=null;
+  for(const s of slots){if(nm>=toMin(s[0])&&nm<toMin(s[1]))cur=s;if(!cur&&!nxt&&toMin(s[0])>nm)nxt=s}
+  const lvl=levelOf(S.xp),base=LEVELS[lvl-1],nx=nextLevelXp(S.xp);
+  const pct=Math.min(100,Math.round((S.xp-base)/(nx-base)*100));
+  m.innerHTML=`<div class="brand">${LOGO}<div><div class="bt">Terminal<span>+</span></div><div class="bs">Ton avenir se prépare maintenant</div></div><div class="lvbadge">Niv. ${lvl}</div></div>
+  <div class="hello card"><div class="hi">${cur?PROGRAMS[cur[2]].ico:"🎯"}</div><div class="ht"><b>Bonjour Mleck !</b><p>${cur?`En cours : ${PROGRAMS[cur[2]].n} · ${cur[0]}–${cur[1]}`:(nxt?`Prochaine : ${PROGRAMS[nxt[2]].ico} ${PROGRAMS[nxt[2]].n} à ${nxt[0]}`:coachMsg("hello"))}</p>
+    ${cur?`<button class="btn primary" style="margin-top:10px" onclick="go('planning','${cur[2]}')">▶ Commencer · +${PROGRAMS[cur[2]].xp} XP</button>`
+      :nxt?`<button class="btn" style="margin-top:10px" onclick="go('planning','${nxt[2]}')">Voir la prochaine séance →</button>`:""}
+    </div><span class="pillobj">🔥 Objectif : Réussir ton bac</span></div>
+  <div class="stats4">
+    <div class="tile"><i style="--c:#30d158">✅</i><div><b>${slots.filter(x=>S.done[`${dn}|${x[0]}|${x[2]}`]).length}/${slots.length}</b><span>Séances du jour</span></div></div>
+    <div class="tile"><i style="--c:#0a84ff">📖</i><div><b>${(S.studyMin/60).toFixed(1)}h</b><span>Temps d'étude</span></div></div>
+    <div class="tile"><i style="--c:#ffd60a">⭐</i><div><b>${streakCalc()}</b><span>Jours consécutifs</span></div></div>
+    <div class="tile"><i style="--c:#bf5af2">📈</i><div><span>Progression · ${S.xp} XP</span><b>${pct}%</b><div class="xpbar"><div style="width:${pct}%"></div></div></div></div>
+  </div>
+  <div class="secthead"><h2>📚 Mes matières</h2><a onclick="go('etudes')">Voir tout →</a></div>
+  <div class="subjgrid">${SUBJECTS.map(sj=>{const d=S.subjects[sj]||{chaps:[]};const t=d.chaps.length,ok=d.chaps.filter(c=>c.s==="maitrise").length;
+    return `<div class="sc" style="--c:${SM[sj][1]}" onclick="openSubj('${sj}')"><em>›</em><i>${SM[sj][0]}</i><div><b>${sj}</b><span>Cours • Exercices • Révisions</span><small>${ok}/${t} maîtrisés</small></div></div>`}).join("")}</div>
+  <div class="secthead"><h2>🎯 Mes compétences</h2><a onclick="go('competences')">Voir tout →</a></div>
+  <div class="skillrow">${SK.filter(k=>PROGRAMS[k[0]]).map(k=>`<div class="sk" onclick="go('planning','${k[0]}')"><i>${PROGRAMS[k[0]].ico}</i>${k[1]}</div>`).join("")}</div>
+  <div class="secthead"><h2>⚡ Outils rapides</h2></div>
+  <div class="quick"><button onclick="go('planning')">🗓️ Planning</button><button onclick="go('habits')">✅ Habitudes</button><button onclick="go('journal')">📓 Journal</button><button onclick="document.getElementById('dashTimer').scrollIntoView({behavior:'smooth',block:'center'})">⏱️ Concentration</button></div>
+  <div class="secthead"><h2>📋 Programme du jour</h2><a onclick="go('planning')">Tout voir →</a></div>
+  <div class="card timeline" style="padding:6px 0;margin-bottom:14px">
+    ${slots.length?slots.map((sl,i)=>{const pp=PROGRAMS[sl[2]];const dn2=S.done[`${dn}|${sl[0]}|${sl[2]}`];const cr=nm>=toMin(sl[0])&&nm<toMin(sl[1]);
+      return `<div class="trow ${cr?"cur":""} ${dn2?"tdone":""}" onclick="go('planning','${sl[2]}')">
+        <span class="tt">${sl[0]}</span><span class="ti">${pp.ico}</span>
+        <span class="tn">${pp.n}</span>
+        ${dn2?'<span class="tcheck">✓</span>':`<span class="txp">+${pp.xp}</span>`}
+        <span class="tarrow">›</span></div>`}).join(""):"<p style='padding:14px;color:var(--muted)'>Rien de prévu.</p>"}
+  </div>
+  ${timerHTML(cur?cur[2]:null)}
+  <div class="card" style="margin-top:14px"><h3><span class="dot" style="background:var(--green)"></span>Rappels du jour</h3>
+    ${RAPPELS.slice(0,8).map((r,i)=>S.reminders[i]?`<div class="lrow"><span>🕐 <b>${r[0]}</b> — ${r[1]}</span></div>`:"").join("")||"<p style='color:var(--muted)'>Tous désactivés.</p>"}</div>`;
+}
+let TDUR=25*60,TREM=25*60,TINT=null,TRUN=false,TPROG=null;
+function timerHTML(prog){const dur=TDUR,rem=TREM,ratio=Math.min(1,Math.max(0,1-rem/Math.max(1,dur)));
+  const mm=String(Math.floor(rem/60)).padStart(2,"0"),ss=String(rem%60).padStart(2,"0");
+  const canResume=!TRUN&&TREM>0&&TREM<TDUR;
+  const startBtn=TRUN?`<button class="btn" onclick="pauseTimer()">⏸ Pause</button>`
+    :canResume?`<button class="btn primary" onclick="resumeTimer()">▶ Reprendre</button>`
+    :`<button class="btn primary" onclick="startTimer(25,${prog?`'${prog}'`:"null"})">▶ Démarrer</button>`;
+  return `<div class="card"><h3><span class="dot" style="background:var(--gold)"></span>⏱️ Mode concentration</h3>
+    <p style="text-align:center;color:var(--muted);font-size:.78rem;margin:-4px 0 8px">${prog?PROGRAMS[prog].n:"Session libre"}</p>
+    <div class="timerbig" id="dashTimer">${mm}:${ss}</div>
+    <div class="xpbar" style="max-width:280px;margin:0 auto 14px"><div id="timerBarFill" style="width:${Math.round(ratio*100)}%"></div></div>
+    <div class="segdisp">${[25,45,60].map(p=>`<button class="seg ${dur===p*60?"on":""}" onclick="startTimer(${p},${prog?`'${prog}'`:"null"})">${p} min</button>`).join("")}</div>
+    <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">
+      <input type="number" id="customMin" min="1" max="240" placeholder="Durée perso (min)" style="max-width:170px;text-align:center">
+      <button class="btn small" onclick="const v=parseInt(document.getElementById('customMin').value);if(v>0)startTimer(v,${prog?`'${prog}'`:"null"});else toast('Entre un nombre de minutes')">Démarrer</button>
+    </div>
+    <div class="timerbtns" style="margin-top:10px">${startBtn}<button class="btn ghost" onclick="resetTimer(${prog?`'${prog}'`:"null"})">↺ Réinit.</button></div>
+  </div>`}
+function startTimer(min,prog){TDUR=min*60;TREM=TDUR;TPROG=prog||null;TRUN=true;clearInterval(TINT);
+  TINT=setInterval(tickTimer,1000);render()}
+function pauseTimer(){TRUN=false;clearInterval(TINT);render()}
+function resumeTimer(){if(TREM<=0)return;TRUN=true;clearInterval(TINT);TINT=setInterval(tickTimer,1000);render()}
+function resetTimer(prog){clearInterval(TINT);TRUN=false;TDUR=25*60;TREM=25*60;TPROG=prog||null;render()}
+function tickTimer(){TREM--;if(TREM<=0){clearInterval(TINT);TRUN=false;finishTimerSession();return}drawTimerLive()}
+function drawTimerLive(){const el=document.getElementById("dashTimer");if(!el)return;
+  el.textContent=String(Math.floor(TREM/60)).padStart(2,"0")+":"+String(TREM%60).padStart(2,"0");
+  const bar=document.getElementById("timerBarFill");if(bar)bar.style.width=Math.round((1-TREM/Math.max(1,TDUR))*100)+"%"}
+function finishTimerSession(){
+  if(TPROG&&PROGRAMS[TPROG]){completeProg(TPROG)}
+  else{addXP(25,"Session de concentration");modal(`<div class="big">🎉</div><h2>Session terminée !</h2><p style="font-size:2rem;font-weight:800;color:var(--green);margin:8px 0">+25 XP</p><p style="color:var(--muted);margin-bottom:16px">Total : <b>${S.xp} XP</b> — Niveau ${levelOf(S.xp)}</p><button class="btn green" onclick="closeModal()">Continuer</button>`)}
+  TDUR=25*60;TREM=25*60;TPROG=null;render()}
+let EDITPLAN=false;
+function delSlot(d,t,k){S.schedule[d]=S.schedule[d].filter(s=>!(s[0]===t&&s[2]===k));save();render()}
+function addSlot(d){const a=document.getElementById("na-"+d).value,b=document.getElementById("nb-"+d).value,p=document.getElementById("np-"+d).value;
+  if(!a||!b){toast("Renseigne l'heure de début et de fin");return}
+  S.schedule[d].push([a,b,p]);S.schedule[d].sort((x,y)=>x[0].localeCompare(y[0]));save();render()}
+function renderPlanning(m){
+  if(CURPROG&&PROGRAMS[CURPROG]){renderProgram(m,CURPROG);return}
+  const dn=dayName();
+  m.innerHTML=`<h1>Planning hebdomadaire</h1><p class="sub">Touche une séance pour voir ses ressources. ${EDITPLAN?"Mode édition actif — supprime ou ajoute des créneaux.":""}</p>
+  <button class="btn ${EDITPLAN?"primary":""}" style="margin-bottom:14px" onclick="EDITPLAN=!EDITPLAN;render()">${EDITPLAN?"✓ Terminer l'édition":"✎ Modifier le planning"}</button>
+  <div class="days">${Object.keys(S.schedule).map(d=>`
+    <div class="daycol ${d===dn?"today":""}"><h4>${d}${d===dn?" ●":""}</h4>
+      ${S.schedule[d].map(s=>{const p=PROGRAMS[s[2]];const done=S.done[`${d}|${s[0]}|${s[2]}`];
+        return `<div class="slot ${done?"done":""}" onclick="${EDITPLAN?"":`openProg('${s[2]}')`}">
+          <div class="t">${s[0]} – ${s[1]}</div><div class="n">${p.ico} ${p.n}</div>
+          <span class="badge">${p.cat}</span> <span class="badge" style="color:var(--green)">+${p.xp} XP</span>
+          ${EDITPLAN?`<button class="btn ghost small" style="margin-top:6px;color:var(--red)" onclick="event.stopPropagation();delSlot('${d}','${s[0]}','${s[2]}')">🗑 Retirer</button>`:""}</div>`}).join("")}
+      ${EDITPLAN?`<div class="slot" style="cursor:default">
+        <input type="text" id="na-${d}" placeholder="Début (ex 18h00)" style="margin-bottom:6px">
+        <input type="text" id="nb-${d}" placeholder="Fin (ex 18h30)" style="margin-bottom:6px">
+        <select id="np-${d}" style="margin-bottom:6px">${Object.keys(PROGRAMS).map(k=>`<option value="${k}">${PROGRAMS[k].ico} ${PROGRAMS[k].n}</option>`).join("")}</select>
+        <button class="btn small primary" onclick="addSlot('${d}')">+ Ajouter</button></div>`:""}
+    </div>`).join("")}</div>`;
+}
+function openProg(k){CURPROG=k;render()}
+function renderProgram(m,k){const p=PROGRAMS[k];
+  const vids=(VIDEOS[{logique:"logique",strategie:"strategie",informatique:"info",maths:"maths",revisions:"maths",pensee:"critique",lecture:"lecture",business:"business",anglais:"anglais",combat:"combat",psychologie:"psychologie",piano:"piano"}[k]]||[]);
+  const tips=CONSEILS[p.tips]||[];
+  m.innerHTML=`<button class="btn ghost small" onclick="CURPROG=null;render()">← Retour au planning</button>
+  <div class="pdhead" style="margin-top:12px"><div class="pdicon">${p.ico}</div>
+    <div><h1 style="margin:0">${p.n}</h1><p class="sub" style="margin:2px 0 0">${p.cat}</p></div></div>
+  <div class="chips"><span class="chip xp">+${p.xp} XP à la validation</span><span class="chip">Minuteur inclus</span><span class="chip">Ressources liées</span></div>
+  <div class="card" style="margin-bottom:14px"><h3><span class="dot" style="background:var(--red)"></span>⏰ Alarme & 🔔 notification</h3>
+    <p style="color:var(--muted);font-size:.8rem;margin-bottom:10px">Réveil et coucher ont déjà une vraie alarme sur ton téléphone. Pour ce programme, demande-moi dans le chat "crée une alarme pour ${p.n}" et je le fais réellement — ou reçois un rappel local pendant que l'app reste ouverte :</p>
+    <button class="btn small" onclick="notifyIn10('${p.n.replace(/'/g,"")}')">🔔 Me notifier dans 10 min</button></div>
+  ${timerHTML(k)}
+  <div class="grid g2">
+    <div class="card"><h3><span class="dot"></span>Applications recommandées</h3>
+      ${p.apps.length?p.apps.map(a=>{const A=APPS[a];return `<div class="resrow"><div class="ric">${A.ico}</div><div class="rt"><b>${A.n}</b><p>${A.d}</p></div><a href="${A.l}" target="_blank">Ouvrir ↗</a></div>`}).join(""):"<p style='color:var(--muted);font-size:.85rem'>Aucune application nécessaire pour cette séance.</p>"}
+      ${vids.length?`<h3 style="margin-top:16px"><span class="dot" style="background:var(--red)"></span>Vidéos & liens YouTube</h3>`+vids.map(v=>`<div class="resrow"><div class="ric">▶️</div><div class="rt"><b>${v[0]}</b><p>${v[1]}</p></div><a href="${v[2]}" target="_blank">Regarder ↗</a></div>`).join(""):""}
+    </div>
+    ${(METHODE[k]||LIVRES[k])?`<div class="card">
+    ${METHODE[k]?`<h3><span class="dot" style="background:var(--green)"></span>Ce que tu dois réellement faire</h3><div class="tip">🎯 ${METHODE[k]}</div>`:""}
+    ${LIVRES[k]?`<h3 style="margin-top:${METHODE[k]?'16px':'0'}"><span class="dot" style="background:var(--accent2)"></span>Livres à lire</h3>${LIVRES[k].map(l=>`<div class="tip">📚 ${l}</div>`).join("")}`:""}
+  </div>`:""}
+  <div class="card"><h3><span class="dot" style="background:var(--gold)"></span>Conseils</h3>
+      ${tips.map(t=>`<div class="tip">💡 ${t}</div>`).join("")}
+      ${p.hab.length?`<h3 style="margin-top:16px"><span class="dot" style="background:var(--green)"></span>Habitudes liées</h3>`+p.hab.map(h=>`<div class="lrow" onclick="go('habits')" style="cursor:pointer"><span>✅ ${HABITS[h]}</span><span style="color:var(--accent);font-size:.75rem">Ouvrir →</span></div>`).join(""):""}
+      <h3 style="margin-top:16px"><span class="dot" style="background:var(--accent2)"></span>Séance</h3>
+      <div class="timerbig" id="dashTimer">25:00</div>
+      <div class="timerbtns">
+        <button class="btn ghost" onclick="startTimer(25)">25</button><button class="btn ghost" onclick="startTimer(45)">45</button><button class="btn ghost" onclick="startTimer(60)">60</button>
+        <button class="btn primary" onclick="startTimer(25)">▶ Démarrer</button>
+        <button class="btn ghost" onclick="stopTimer()">⏸ Pause</button>
+      </div>
+      <button class="btn green" style="width:100%;justify-content:center;margin-top:12px;padding:13px" onclick="completeProg('${k}')">✔ Terminer la séance — valider +${p.xp} XP</button>
+    </div>
+  </div>`;
+}
+function completeProg(k){const p=PROGRAMS[k];
+  addXP(p.xp,p.n);
+  const dn=dayName();const slot=(S.schedule[dn]||[]).find(s=>s[2]===k);if(slot)S.done[`${dn}|${slot[0]}|${k}`]=true;
+  S.studyMin+=25;save();
+  modal(`<div class="big">${p.ico}</div><h2>Séance terminée !</h2>
+    <p style="font-size:2rem;font-weight:800;color:var(--green);margin:8px 0">+${p.xp} XP</p>
+    <p style="color:var(--muted);margin-bottom:16px">${p.n} validée. Total : <b>${S.xp} XP</b> — Niveau ${levelOf(S.xp)}</p>
+    <button class="btn primary" onclick="closeModal();go('dash')">Continuer</button>`)}
+function renderEtudes(m){
+  m.innerHTML=`<h1>Suivi des études — Terminale</h1><p class="sub">Chapitres, progression, erreurs et révisions par matière.</p>
+  <div class="grid g2"><div>
+  ${SUBJECTS.map(subj=>{const d=S.subjects[subj]||{chaps:[],notes:[]};
+    const tot=d.chaps.length,done=d.chaps.filter(c=>c.s==="maitrise").length;
+    return `<div class="subj" id="subj-${subj.replace(/\W/g,"")}"><div class="subjhdr" style="--c:${SM[subj][1]}" onclick="this.parentElement.classList.toggle('open')">
+      <b>${SM[subj][0]} ${subj}</b><span style="color:var(--muted);font-size:.78rem">${done}/${tot} maîtrisés · ${d.notes.length} erreur(s)</span></div>
+    <div class="subjbody">
+      <div class="tip">📌 Méthode : ${METHODES[subj]}</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px"><input type="text" id="chap-${subj.replace(/\W/g,"")}" placeholder="Nouveau chapitre…" style="flex:1">
+      <button class="btn primary small" onclick="addChap('${subj}')">+ Ajouter</button></div>
+      ${d.chaps.map((c,i)=>`<div class="chap"><span style="flex:1">${esc(c.n)}</span>
+        <select onchange="setChap('${subj}',${i},this.value)" style="width:auto;padding:5px 8px;font-size:.78rem">
+          <option value="aprendre" ${c.s==="aprendre"?"selected":""}>À apprendre</option>
+          <option value="encours" ${c.s==="encours"?"selected":""}>En cours</option>
+          <option value="maitrise" ${c.s==="maitrise"?"selected":""}>Maîtrisé</option></select>
+        <button class="btn ghost small" onclick="delChap('${subj}',${i})">✕</button></div>`).join("")||"<p style='color:var(--muted);font-size:.8rem;padding:4px'>Aucun chapitre.</p>"}
+      <div style="display:flex;gap:6px;margin-top:6px"><input type="text" id="err-${subj.replace(/\W/g,"")}" placeholder="Noter une erreur / point faible…" style="flex:1">
+      <button class="btn small" onclick="addNote('${subj}')">Noter</button></div>
+      ${d.notes.map((n,i)=>`<div class="chap" style="border-left:3px solid var(--red)"><span style="flex:1">⚠ ${esc(n)}</span><button class="btn ghost small" onclick="delNote('${subj}',${i})">✕</button></div>`).join("")}
+    </div></div>`}).join("")}</div>
+  <div class="card" style="align-self:start"><h3><span class="dot"></span>Méthode de révision</h3>
+    <div class="tip">📖 Active recall : ferme le cahier et restitue de mémoire.</div>
+    <div class="tip">🗓️ Révise le jour même du cours + 3 jours après + 1 semaine.</div>
+    <div class="tip">⚠️ Transforme chaque erreur en carte Anki.</div>
+    <div class="tip">🎯 1 exercice difficile vaut 5 exercices faciles.</div></div></div>`;
+}
+function subKey(s){return s.replace(/\W/g,"")}
+function addChap(subj){const el=document.getElementById("chap-"+subKey(subj));if(!el.value.trim())return;
+  S.subjects[subj]=S.subjects[subj]||{chaps:[],notes:[]};S.subjects[subj].chaps.push({n:el.value.trim(),s:"aprendre"});save();render()}
+function setChap(subj,i,v){S.subjects[subj].chaps[i].s=v;save();render()}
+function delChap(subj,i){S.subjects[subj].chaps.splice(i,1);save();render()}
+function addNote(subj){const el=document.getElementById("err-"+subKey(subj));if(!el.value.trim())return;
+  S.subjects[subj]=S.subjects[subj]||{chaps:[],notes:[]};S.subjects[subj].notes.push(el.value.trim());save();render()}
+function delNote(subj,i){S.subjects[subj].notes.splice(i,1);save();render()}
+function renderCompetences(m){
+  const cats={};Object.keys(PROGRAMS).forEach(k=>{const c=PROGRAMS[k].cat;cats[c]=cats[c]||[];cats[c].push(k)});
+  m.innerHTML=`<h1>Compétences</h1><p class="sub">Toutes les compétences du programme — touche pour ouvrir les ressources.</p>
+  ${Object.keys(cats).map(c=>`<h3 style="margin:18px 0 10px;font-size:.95rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">${c}</h3>
+    <div class="grid g3">${cats[c].map(k=>{const p=PROGRAMS[k];return `<div class="card" style="cursor:pointer" onclick="go('planning','${k}')">
+      <div style="font-size:1.6rem">${p.ico}</div><b>${p.n}</b>
+      <p style="color:var(--muted);font-size:.78rem;margin:4px 0 8px">${(CONSEILS[p.tips]||[""])[0]}</p>
+      <span class="chip xp">+${p.xp} XP</span></div>`}).join("")}</div>`).join("")}`;
+}
+function renderApps(m){
+  m.innerHTML=`<h1>Applications recommandées</h1><p class="sub">Toutes vérifiées, gratuites ou freemium, adaptées à ton programme.</p>
+  <div class="grid g3">${Object.values(APPS).map(a=>`<div class="card">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px"><span style="font-size:1.6rem">${a.ico}</span><div><b>${a.n}</b><br><span style="color:var(--muted);font-size:.75rem">${a.cat}</span></div></div>
+    <p style="color:var(--muted);font-size:.83rem;margin-bottom:10px">${a.d}</p>
+    <a class="btn primary small" href="${a.l}" target="_blank">Ouvrir ↗</a></div>`).join("")}</div>`;
+}
+function renderRessources(m){
+  const LIVRES=[["Atomic Habits — James Clear","Habitudes","Le manuel de référence pour construire des habitudes durables.","https://jamesclear.com/atomic-habits"],
+    ["Thinking, Fast and Slow — Daniel Kahneman","Pensée critique","Comprendre les biais de ton cerveau.","https://us.macmillan.com/books/9780374533557"],
+    ["The 7 Habits of Highly Effective People — S. Covey","Efficacité personnelle","Les 7 habitudes des gens efficaces.","https://www.franklincovey.com/the-7-habits/"]];
+  m.innerHTML=`<h1>Ressources</h1><p class="sub">YouTube, sites et livres organisés par compétence.</p>
+  <div class="grid g2">
+    <div class="card"><h3><span class="dot" style="background:var(--red)"></span>Vidéos YouTube</h3>
+      ${Object.entries(VIDEOS).flatMap(([k,arr])=>arr.map(v=>`<div class="resrow"><div class="ric">▶️</div><div class="rt"><b>${v[0]}</b><p>${v[1]}</p></div><a href="${v[2]}" target="_blank">Regarder ↗</a></div>`)).join("")}</div>
+    <div><div class="card" style="margin-bottom:14px"><h3><span class="dot"></span>Sites</h3>
+      <div class="resrow"><div class="ric">♟️</div><div class="rt"><b>Lichess</b><p>Échecs gratuits illimités.</p></div><a href="https://lichess.org" target="_blank">Ouvrir ↗</a></div>
+      <div class="resrow"><div class="ric">💻</div><div class="rt"><b>freeCodeCamp</b><p>Certifications gratuites.</p></div><a href="https://www.freecodecamp.org" target="_blank">Ouvrir ↗</a></div>
+      <div class="resrow"><div class="ric">📐</div><div class="rt"><b>Khan Academy</b><p>Maths & sciences.</p></div><a href="https://fr.khanacademy.org" target="_blank">Ouvrir ↗</a></div></div>
+    <div class="card"><h3><span class="dot" style="background:var(--gold)"></span>Livres</h3>
+      ${LIVRES.map(l=>`<div class="resrow"><div class="ric">📕</div><div class="rt"><b>${l[0]}</b><p>${l[1]} — ${l[2]}</p></div><a href="${l[3]}" target="_blank">Voir ↗</a></div>`).join("")}</div></div>
+  </div>`;
+}
+function renderHabits(m){
+  const tk=todayKey(),today=S.habits[tk]||{};
+  const keys=Object.keys(HABITS),done=keys.filter(k=>today[k]).length;
+  let streak=0,d=new Date();
+  while(true){const kk=d.toISOString().slice(0,10);const hh=S.habits[kk]||{};
+    if(keys.every(k=>hh[k])){streak++;d.setDate(d.getDate()-1)}else break}
+  m.innerHTML=`<h1>Habitudes</h1><p class="sub">Coche chaque jour. La série parfaite fait monter ta régularité.</p>
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card"><div class="stat" style="color:var(--green)">${done}/${keys.length}</div><div class="statlbl">Aujourd'hui</div></div>
+    <div class="card"><div class="stat">🔥 ${streak}</div><div class="statlbl">Série parfaite (jours)</div></div>
+    <div class="card"><div class="stat">${Math.round(done/keys.length*100)}%</div><div class="statlbl">Taux du jour</div></div>
+    <div class="card"><div class="stat" style="color:var(--gold)">🏆 ${S.bestStreak||0}</div><div class="statlbl">Meilleure série</div></div></div>
+  <div class="card">${keys.map(k=>`<div class="habit ${today[k]?"done":""}">
+    <div class="cb ${today[k]?"on":""}" onclick="toggleHabit('${k}')">✔</div><b>${HABITS[k]}</b>
+    <span class="meta">${today[k]?"Validé ✓":"À faire"}</span></div>`).join("")}</div>`;
+}
+function toggleHabit(k){const tk=todayKey();S.habits[tk]=S.habits[tk]||{};
+  S.habits[tk][k]=!S.habits[tk][k];
+  if(S.habits[tk][k])addXP(5,"Habitude : "+HABITS[k],true);
+  if(Object.keys(HABITS).every(h=>S.habits[tk][h])){S.bestStreak=Math.max(S.bestStreak||0,streakCalc());toast("🏆 Journée parfaite ! Toutes les habitudes validées.")}
+  save();render()}
+function streakCalc(){let s=0,d=new Date();const keys=Object.keys(HABITS);
+  while(true){const hh=S.habits[d.toISOString().slice(0,10)]||{};
+    if(keys.every(k=>hh[k])){s++;d.setDate(d.getDate()-1)}else break}return s}
+const JQ=["Qu'ai-je appris aujourd'hui ?","Quelle erreur ai-je faite ?","Comment la corriger ?","Qu'est-ce qui m'a déconcentré ?","Quelle est ma priorité pour demain ?"];
+function renderJournal(m){
+  const tk=todayKey(),e=S.journal[tk]||{};
+  m.innerHTML=`<h1>Journal du soir</h1><p class="sub">5 questions. 5 minutes. Chaque soir après 21h.</p>
+  <div class="grid g2"><div class="card">
+    ${JQ.map((q,i)=>`<div class="jq">${i+1}. ${q}</div><textarea id="j${i}" placeholder="Ta réponse…">${esc(e[i]||"")}</textarea>`).join("")}
+    <button class="btn green" style="margin-top:14px;width:100%;justify-content:center" onclick="saveJournal()">💾 Enregistrer le journal (+10 XP)</button></div>
+  <div class="card" style="align-self:start"><h3><span class="dot"></span>Historique</h3>
+    ${Object.keys(S.journal).sort().reverse().slice(0,10).map(d=>`<div class="lrow" style="cursor:pointer" onclick="viewJournal('${d}')"><span>📓 ${d}</span><span style="color:var(--accent)">Lire →</span></div>`).join("")||"<p style='color:var(--muted)'>Aucune entrée pour l'instant.</p>"}</div></div>`;
+}
+function saveJournal(){const tk=todayKey();const was=S.journal[tk];S.journal[tk]=JQ.map((_,i)=>document.getElementById("j"+i).value);
+  if(!was)addXP(10,"Journal du soir",true);else save();
+  toast("📓 Journal enregistré !");render()}
+function viewJournal(d){const e=S.journal[d];modal(`<h2 style="margin-bottom:10px">📓 ${d}</h2>${JQ.map((q,i)=>`<div class="jq" style="text-align:left">${i+1}. ${q}</div><p style="text-align:left;font-size:.85rem;color:var(--muted);margin-bottom:8px">${esc(e[i]||"—")||"—"}</p>`).join("")}<button class="btn primary" onclick="closeModal()" style="margin-top:10px">Fermer</button>`)}
+function coachMsg(k){const soft={hello:"Continue sur ta lancée, chaque petit effort compte.",done:"⚡ +${x} XP — ${label}"};
+  const hard={hello:"Personne ne fera le travail à ta place. Bouge.",done:"Fait. C'est le minimum attendu. Suivant."};
+  return (S.rigueur?hard:soft)[k]}
+function addXP(x,label,silent){S.xp+=x;S.hist.push({d:todayKey(),x,label});
+  if(!silent)toast(S.rigueur?coachMsg("done"):`⚡ +${x} XP — ${label}`);save()}
+let CARDSHOW=null;
+function addCard(){const subj=document.getElementById("cardSubj").value,f=document.getElementById("cardFront").value.trim(),b=document.getElementById("cardBack").value.trim();
+  if(!f||!b){toast("Recto et verso obligatoires");return}
+  S.cards.push({id:"c"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),subj,front:f,back:b,due:Date.now(),ivl:0});
+  save();render()}
+function delCard(id){S.cards=S.cards.filter(c=>c.id!==id);save();render()}
+function gradeCard(id,g){const c=S.cards.find(x=>x.id===id);if(!c)return;const now=Date.now();
+  if(g==="again"){c.ivl=0;c.due=now+10*60000}
+  else{c.ivl=c.ivl===0?1:g==="hard"?Math.max(1,Math.round(c.ivl*1.2)):g==="good"?Math.round(c.ivl*2):Math.round(c.ivl*3);
+    c.due=now+c.ivl*86400000;S.xp+=5;S.hist.push({d:todayKey(),x:5,label:"Fiche revue"})}
+  CARDSHOW=null;save();render()}
+function renderFiches(m){
+  const due=S.cards.filter(c=>c.due<=Date.now());
+  m.innerHTML=`<h1>🧠 Fiches (répétition espacée)</h1><p class="sub">Comme Anki, directement dans l'app. Crée une fiche, révise-la quand elle est due — l'intervalle s'allonge si tu la connais bien.</p>
+  <div class="card" style="margin-bottom:16px"><h3>➕ Nouvelle fiche</h3>
+    <select id="cardSubj" style="margin-bottom:8px">${SUBJECTS.map(s=>`<option>${s}</option>`).join("")}<option>Général</option></select>
+    <textarea id="cardFront" placeholder="Recto — la question"></textarea><div style="height:8px"></div>
+    <textarea id="cardBack" placeholder="Verso — la réponse"></textarea><div style="height:10px"></div>
+    <button class="btn primary" onclick="addCard()">Ajouter la fiche</button></div>
+  <div class="card" style="margin-bottom:16px"><h3><span class="dot" style="background:var(--green)"></span>À réviser maintenant (${due.length})</h3>
+    ${due.length?due.map(c=>`<div class="slot" style="cursor:default;margin-bottom:10px">
+      <div class="n">${c.subj} · ${c.front}</div>
+      ${CARDSHOW===c.id?`<div style="margin:8px 0;color:var(--muted)">${c.back}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn small" style="background:var(--red);color:#fff" onclick="gradeCard('${c.id}','again')">Encore</button>
+          <button class="btn small" onclick="gradeCard('${c.id}','hard')">Difficile</button>
+          <button class="btn small" onclick="gradeCard('${c.id}','good')">Correct</button>
+          <button class="btn small green" onclick="gradeCard('${c.id}','easy')">Facile</button>
+        </div>`:`<button class="btn small" onclick="CARDSHOW='${c.id}';render()">Voir la réponse</button>`}
+      </div>`).join(""):"<p style='color:var(--muted)'>Rien à réviser pour l'instant 👌</p>"}</div>
+  <div class="card"><h3>📚 Toutes les fiches (${S.cards.length})</h3>
+    ${S.cards.length?S.cards.map(c=>`<div class="lrow"><span>${c.subj} · ${c.front}</span><button class="btn ghost small" onclick="delCard('${c.id}')">🗑</button></div>`).join(""):"<p style='color:var(--muted)'>Aucune fiche créée.</p>"}</div>`;
+}
+function renderProgression(m){
+  const lvl=levelOf(S.xp),base=LEVELS[lvl-1],nx=nextLevelXp(S.xp);
+  const pct=Math.min(100,Math.round((S.xp-base)/(nx-base)*100));
+  const month=todayKey().slice(0,7)+"-01";
+  m.innerHTML=`<h1>Progression & XP</h1><p class="sub">Niveau ${lvl} · ${S.xp} XP au total</p>
+  <div class="grid g4">
+    <div class="card"><div class="stat" style="color:var(--accent)">${xpSince(todayKey())}</div><div class="statlbl">XP aujourd'hui</div></div>
+    <div class="card"><div class="stat" style="color:var(--accent)">${xpSince(weekKey())}</div><div class="statlbl">XP cette semaine</div></div>
+    <div class="card"><div class="stat" style="color:var(--accent)">${xpSince(month)}</div><div class="statlbl">XP ce mois</div></div>
+    <div class="card"><div class="stat" style="color:var(--gold)">Niv. ${lvl}</div><div class="statlbl">Niveau actuel</div></div></div>
+  <div class="card" style="margin:14px 0"><h3><span class="dot" style="background:var(--gold)"></span>Progression vers le niveau ${lvl+1} (${nx} XP)</h3>
+    <div class="xpbar" style="height:16px"><div style="width:${pct}%"></div></div>
+    <p style="color:var(--muted);font-size:.83rem">${S.xp-base} / ${nx-base} XP — encore ${nx-S.xp} XP pour monter de niveau.</p></div>
+  <div class="grid g2"><div class="card"><h3><span class="dot"></span>Grille des niveaux</h3>
+    ${LEVELS.map((x,i)=>`<div class="lrow"><span>Niveau ${i+1}</span><b style="color:${S.xp>=x?"var(--green)":"var(--muted)"}">${S.xp>=x?"✔":""} ${x} XP</b></div>`).join("")}</div>
+  <div class="card"><h3><span class="dot" style="background:var(--green)"></span>Historique XP</h3>
+    ${S.hist.slice(-25).reverse().map(h=>`<div class="lrow"><span>${h.d} — ${esc(h.label)}</span><b style="color:var(--green)">+${h.x}</b></div>`).join("")||"<p style='color:var(--muted)'>Encore aucun XP — commence une séance !</p>"}</div></div>`;
+}
+function renderParams(m){
+  m.innerHTML=`<h1>Paramètres</h1><p class="sub">Rappels visuels, apparence et données.</p>
+  <div class="grid g2"><div class="card"><h3><span class="dot"></span>Rappels</h3>
+    ${RAPPELS.map((r,i)=>`<div class="lrow"><span>🕐 <b>${r[0]}</b> — ${r[1]}</span><div class="switch ${S.reminders[i]?"on":""}" onclick="S.reminders[${i}]=!S.reminders[${i}];save();render()"></div></div>`).join("")}
+    <p style="color:var(--muted);font-size:.75rem;margin-top:8px">Rappels visuels (notifications natives prévues en V2).</p></div>
+  <div class="card"><h3><span class="dot" style="background:var(--accent2)"></span>Apparence & données</h3>
+    <div class="lrow"><span>🌙 / ☀️ Mode sombre / clair</span><div class="switch ${!S.light?"on":""}" onclick="S.light=!S.light;document.body.classList.toggle('light',S.light);save();render()"></div></div>
+    <div class="lrow"><span>⚡ XP total</span><b>${S.xp} XP</b></div>
+    <div class="lrow"><span>⏱ Temps d'étude</span><b>${S.studyMin} min</b></div>
+    <button class="btn" style="margin-top:12px" onclick="S.studyMin+=30;save();render()">+30 min d'étude manuelles</button>
+    <button class="btn ghost" style="margin-top:10px;color:var(--red)" onclick="if(confirm('Tout réinitialiser ? Cette action est définitive.')){localStorage.removeItem(KEY);location.reload()}">🗑 Réinitialiser toutes les données</button>
+    <p style="color:var(--muted);font-size:.75rem;margin-top:12px">Données stockées localement sur cet appareil (localStorage).</p></div>
+  <div class="card"><h3><span class="dot" style="background:var(--red)"></span>Mode Rigueur</h3>
+    <div class="lrow"><span>🔥 Ton plus strict, zéro complaisance</span><div class="switch ${S.rigueur?"on":""}" onclick="S.rigueur=!S.rigueur;save();render()"></div></div>
+    <p style="color:var(--muted);font-size:.75rem;margin-top:8px">Change le ton des messages (accueil, validation de séance). Aucune punition, juste plus direct.</p></div>
+  <div class="card"><h3><span class="dot" style="background:var(--green)"></span>🔄 Synchronisation entre appareils (bêta)</h3>
+    <p style="color:var(--muted);font-size:.8rem;margin-bottom:10px">Best-effort via un service externe gratuit — pas une sync instantanée, il faut appuyer sur Envoyer / Recevoir. Garde ton code quelque part.</p>
+    <input type="text" id="syncCode" placeholder="Code de synchronisation" value="${S.syncId||""}" style="margin-bottom:8px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn small" onclick="syncCreate()">Créer un code ici</button>
+      <button class="btn small primary" onclick="syncPush()">Envoyer mes données</button>
+      <button class="btn small" onclick="syncPull()">Recevoir depuis ce code</button>
+    </div></div></div>`;
+}
+async function syncCreate(){try{const r=await fetch("https://jsonblob.com/api/jsonBlob",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(S)});
+  const loc=r.headers.get("Location")||r.headers.get("location");if(!loc){toast("Échec — réessaie plus tard");return}
+  S.syncId=loc.split("/").pop();save();render();toast("Code créé : "+S.syncId)}catch(e){toast("Pas de connexion")}}
+async function syncPush(){if(!S.syncId){toast("Crée d'abord un code");return}
+  try{await fetch("https://jsonblob.com/api/jsonBlob/"+S.syncId,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(S)});toast("Envoyé ✓")}catch(e){toast("Échec de l'envoi")}}
+async function syncPull(){const id=document.getElementById("syncCode").value.trim();if(!id){toast("Entre un code");return}
+  try{const r=await fetch("https://jsonblob.com/api/jsonBlob/"+id);if(!r.ok){toast("Code introuvable");return}
+    const data=await r.json();data.syncId=id;S=data;save();render();toast("Reçu ✓")}catch(e){toast("Échec de la réception")}}
+buildNav();
+if(S.light)document.body.classList.add("light");
+const _q=new URLSearchParams(location.search).get("v");
+if(_q&&VIEWS.some(v=>v[0]===_q)){go(_q)}
+else if(_q==="timer"){go("dash");setTimeout(()=>{const t=document.getElementById("dashTimer");t&&t.scrollIntoView({block:"center"})},250)}
+else go("dash");
+</script><script>
+if("serviceWorker" in navigator&&location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js").catch(()=>{}))}
+</script>
+</body>
+</html>
